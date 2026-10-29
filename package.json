@@ -15,6 +15,7 @@
     "connect-sqlite3": "^0.9.16",
     "express": "^4.21.2",
     "express-rate-limit": "^7.5.0",
+    "express-session": "^1.18.1",
     "helmet": "^8.0.0"
   }
 }
