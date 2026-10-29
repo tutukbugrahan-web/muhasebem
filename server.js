@@ -13,7 +13,8 @@ for(const key of ["ADMIN_EMAIL","ADMIN_PASSWORD_HASH","SESSION_SECRET"]) if(!pro
 if(process.env.SESSION_SECRET.length<32){console.error("SESSION_SECRET must be at least 32 characters.");process.exit(1);}
 const dataDir=process.env.DATA_DIR||path.join(root,"data"); fs.mkdirSync(dataDir,{recursive:true});
 const db=new Database(path.join(dataDir,"ledger.sqlite")); db.pragma("journal_mode = WAL");
-db.exec("CREATE TABLE IF NOT EXISTS app_state (id INTEGER PRIMARY KEY CHECK(id=1), payload TEXT NOT NULL, updated_at TEXT NOT NULL); INSERT OR IGNORE INTO app_state(id,payload,updated_at) VALUES(1,'{\\"teams\\":[] , \\"transactions\\":[] , \\"notes\\":[] , \\"currency\\":\\"TRY\\"}',datetime('now'));");
+db.exec("CREATE TABLE IF NOT EXISTS app_state (id INTEGER PRIMARY KEY CHECK(id=1), payload TEXT NOT NULL, updated_at TEXT NOT NULL);");
+db.prepare("INSERT OR IGNORE INTO app_state(id,payload,updated_at) VALUES(1,?,datetime('now'))").run(JSON.stringify({teams:[],transactions:[],notes:[],currency:"TRY"}));
 const SQLiteStore=SQLiteStoreFactory(session);
 app.disable("x-powered-by"); app.set("trust proxy",production?1:false); app.use(helmet({contentSecurityPolicy:false})); app.use(express.json({limit:"1mb"}));
 app.use(session({store:new SQLiteStore({db:"sessions.sqlite",dir:dataDir,concurrentDB:true}),name:"ledger.sid",secret:process.env.SESSION_SECRET,resave:false,saveUninitialized:false,cookie:{httpOnly:true,secure:production,sameSite:"strict",maxAge:8*60*60*1000}}));
