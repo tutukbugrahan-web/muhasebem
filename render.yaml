@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: ledger-esports-finans
+    runtime: node
+    plan: starter
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    disk:
+      name: ledger-data
+      mountPath: /var/data
+      sizeGB: 1
